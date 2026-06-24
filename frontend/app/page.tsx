@@ -1,4 +1,5 @@
 import { MarketGrid } from "@/components/MarketGrid";
+import { CreateMarket } from "@/components/CreateMarket";
 
 export default function Home() {
   return (
@@ -40,6 +41,7 @@ export default function Home() {
       <section>
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-xl font-semibold">Live markets</h2>
+          <CreateMarket />
         </div>
         <MarketGrid />
       </section>

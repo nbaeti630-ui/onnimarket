@@ -11,9 +11,9 @@ const config: Config = {
         ink: "#0a0a0f",
         panel: "rgba(255,255,255,0.04)",
         brand: {
-          DEFAULT: "#7c5cff",
-          400: "#9b86ff",
-          600: "#5b3df0",
+          DEFAULT: "#ff4da6",
+          400: "#ff7cc4",
+          600: "#d6249f",
         },
         up: "#22e0a1",
         down: "#ff5d7a",
@@ -22,7 +22,7 @@ const config: Config = {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
       },
       boxShadow: {
-        glow: "0 0 40px -10px rgba(124,92,255,0.55)",
+        glow: "0 0 40px -10px rgba(255,77,166,0.55)",
       },
       keyframes: {
         float: {

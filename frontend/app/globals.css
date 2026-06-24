@@ -6,58 +6,109 @@
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
-html, body {
-  background: #06060a;
-  color: #ECECF1;
-}
+html { background: #0e0518; }
+body { background: transparent; color: #f4ecff; }
 
-/* Animated aurora background */
+/* ===== Fresh aurora: pink + aqua + violet ===== */
 .aurora {
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: -2;
   overflow: hidden;
   background:
-    radial-gradient(60% 60% at 15% 20%, rgba(124,92,255,0.30), transparent 60%),
-    radial-gradient(50% 50% at 85% 15%, rgba(34,224,161,0.18), transparent 60%),
-    radial-gradient(60% 70% at 70% 85%, rgba(255,93,122,0.16), transparent 60%),
-    #06060a;
+    radial-gradient(50% 60% at 20% 18%, rgba(255,93,176,0.42), transparent 60%),
+    radial-gradient(48% 58% at 84% 14%, rgba(150,108,255,0.32), transparent 60%),
+    radial-gradient(55% 62% at 82% 82%, rgba(56,224,208,0.26), transparent 60%),
+    radial-gradient(48% 58% at 16% 86%, rgba(255,143,199,0.30), transparent 60%);
+  background-color: #0e0518;
+  background-size: 180% 180%;
+  animation: auroraShift 20s ease-in-out infinite;
 }
-.aurora::before {
+@keyframes auroraShift {
+  0%, 100% { background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%; }
+  50%      { background-position: 30% 25%, 70% 35%, 60% 70%, 35% 80%; }
+}
+.aurora::before, .aurora::after {
   content: "";
   position: absolute;
-  inset: -40%;
-  background: conic-gradient(from 0deg, transparent, rgba(124,92,255,0.12), transparent 40%);
-  animation: spin 26s linear infinite;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.5;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+.aurora::before {
+  width: 48vw; height: 48vw;
+  left: -12vw; top: -12vw;
+  background: radial-gradient(circle, #ff5db0, transparent 70%);
+  animation: floatA 16s ease-in-out infinite;
+}
+.aurora::after {
+  width: 42vw; height: 42vw;
+  right: -10vw; bottom: -10vw;
+  background: radial-gradient(circle, #38e0d0, transparent 70%);
+  animation: floatB 22s ease-in-out infinite;
+}
+@keyframes floatA { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(22vw,16vh) scale(1.25); } }
+@keyframes floatB { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-18vw,-14vh) scale(1.2); } }
 
-/* subtle grid overlay */
+/* ===== Ritual endless-knot logo (subtle watermark) ===== */
+.ritual-wrap {
+  position: fixed;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  width: min(82vw, 540px);
+  height: min(82vw, 540px);
+  pointer-events: none;
+}
+.ritual-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -14%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,170,215,0.18), transparent 62%);
+  filter: blur(26px);
+  animation: haloPulse 6.5s ease-in-out infinite;
+}
+.ritual-logo {
+  width: 100%;
+  height: 100%;
+  opacity: 0.16;
+  filter: drop-shadow(0 0 14px rgba(255,120,200,0.25));
+  animation: knotSpin 100s linear infinite;
+}
+@keyframes knotSpin { to { transform: rotate(360deg); } }
+@keyframes haloPulse {
+  0%,100% { opacity: 0.35; transform: scale(1); }
+  50%     { opacity: 0.7; transform: scale(1.08); }
+}
+
+/* grid overlay (subtle) */
 .grid-overlay {
-  position: fixed; inset: 0; z-index: -1;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
   background-image:
-    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse at center, black, transparent 80%);
+    linear-gradient(rgba(255,140,200,0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120,220,255,0.045) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(ellipse at center, black, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 78%);
 }
 
 .glass {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,160,210,0.14);
   backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
-.skeleton {
-  position: relative;
-  overflow: hidden;
-  background: rgba(255,255,255,0.06);
-}
+.skeleton { position: relative; overflow: hidden; background: rgba(255,255,255,0.06); }
 .skeleton::after {
   content: "";
   position: absolute; inset: 0;
   transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,160,210,0.16), transparent);
   animation: shimmer 1.6s infinite;
 }
 @keyframes shimmer { 100% { transform: translateX(100%); } }

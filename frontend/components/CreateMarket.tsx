@@ -15,7 +15,7 @@ const ASSETS = [
   { label: "Bitcoin (BTC)", value: "bitcoin", short: "Bitcoin" },
   { label: "Ethereum (ETH)", value: "ethereum", short: "Ethereum" },
   { label: "Solana (SOL)", value: "solana", short: "Solana" },
-  { label: "BNB", value: "bnb", short: "BNB" },
+  { label: "BNB", value: "binancecoin", short: "BNB" },
 ];
 
 const DURATIONS = [

@@ -112,3 +112,6 @@ body { background: transparent; color: #f4ecff; }
   animation: shimmer 1.6s infinite;
 }
 @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+.ticker { animation: tickerScroll 30s linear infinite; }
+@keyframes tickerScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }

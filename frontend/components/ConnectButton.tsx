@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { ritualChain } from "@/lib/chain";
 import { Wallet, LogOut } from "lucide-react";
@@ -9,10 +10,22 @@ function shorten(addr?: string) {
 }
 
 export function ConnectButton() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const { address, isConnected, chainId } = useAccount();
   const { connect, connectors, isPending } = useConnect();
   const { disconnect } = useDisconnect();
   const { switchChain } = useSwitchChain();
+
+  if (!mounted) {
+    return (
+      <div className="flex items-center gap-2 rounded-xl bg-brand px-4 py-2 text-sm font-medium text-white opacity-80">
+        <Wallet className="h-4 w-4" />
+        Connect Wallet
+      </div>
+    );
+  }
 
   if (isConnected) {
     const wrongChain = chainId !== ritualChain.id;
@@ -26,13 +39,15 @@ export function ConnectButton() {
             Switch to Ritual
           </button>
         )}
-        <span className="glass rounded-xl px-3 py-2 text-sm">{shorten(address)}</span>
+        <span className="glass rounded-xl px-3 py-2 text-sm text-white/80">
+          {shorten(address)}
+        </span>
         <button
           onClick={() => disconnect()}
           className="glass rounded-xl p-2 text-white/70 hover:text-white"
           aria-label="Disconnect"
         >
-          <LogOut size={16} />
+          <LogOut className="h-4 w-4" />
         </button>
       </div>
     );
@@ -45,7 +60,7 @@ export function ConnectButton() {
       disabled={isPending}
       className="flex items-center gap-2 rounded-xl bg-brand px-4 py-2 text-sm font-medium text-white shadow-glow transition hover:bg-brand-600 disabled:opacity-60"
     >
-      <Wallet size={16} />
+      <Wallet className="h-4 w-4" />
       {isPending ? "Connecting…" : "Connect Wallet"}
     </button>
   );

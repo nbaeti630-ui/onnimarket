@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
 
 const DISCORD_URL = "https://discord.gg/ritual";
 
@@ -10,9 +9,7 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-1">
             <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-brand to-brand-600">
-                <Sparkles className="h-4 w-4 text-white" />
-              </span>
+              <img src="/logo.png" alt="OnniMarket" className="h-8 w-8 rounded-xl" />
               <span className="text-lg font-semibold">
                 Onni<span className="text-brand-400">Market</span>
               </span>

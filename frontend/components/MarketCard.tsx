@@ -12,6 +12,8 @@ import { formatEther, parseEther } from "viem";
 import { motion } from "framer-motion";
 import { marketAbi, MARKET_ADDRESS, type MarketView } from "@/lib/contract";
 import { buildFeatures, featuresToInt32 } from "@/lib/ai";
+import { usePrices } from "@/lib/prices";
+import { Sparkline } from "./Sparkline";
 import { TrendingUp, Clock, Coins, Sparkles, Brain } from "lucide-react";
 
 const PRESETS = ["0.01", "0.1", "1"];
@@ -27,9 +29,10 @@ function fmtRemaining(sec: number) {
   return `${m}m ${s}s`;
 }
 
-export function MarketCard({ id, index }: { id: bigint; index: number }) {
+export function MarketCard({ id, index = 0 }: { id: bigint; index?: number }) {
   const { isConnected } = useAccount();
   const publicClient = usePublicClient();
+  const prices = usePrices();
   const [amount, setAmount] = useState("0.01");
   const [pendingSide, setPendingSide] = useState<boolean | null>(null);
   const [resolving, setResolving] = useState(false);
@@ -92,7 +95,7 @@ export function MarketCard({ id, index }: { id: bigint; index: number }) {
   }, [isSuccess]);
 
   if (!market) {
-    return <div className="glass h-64 animate-pulse rounded-3xl" />;
+    return <div className="glass h-72 animate-pulse rounded-3xl" />;
   }
 
   const m = market as unknown as MarketView;
@@ -105,6 +108,10 @@ export function MarketCard({ id, index }: { id: bigint; index: number }) {
     chainNowMs == null ? null : Math.floor((Number(m.deadline) - chainNowMs) / 1000);
   const closed = remaining != null && remaining <= 0;
   const busy = isPending || confirming;
+
+  const info = prices ? prices[m.asset] : undefined;
+  const spark = info?.sparkline ?? [];
+  const sparkUp = info ? info.change24h >= 0 : true;
 
   async function placeBet(isYes: boolean) {
     if (!publicClient) return;
@@ -191,33 +198,52 @@ export function MarketCard({ id, index }: { id: bigint; index: number }) {
       transition={ { delay: index * 0.05 } }
       className="glass group relative rounded-3xl p-5 transition hover:shadow-glow"
     >
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <span className="inline-flex items-center gap-1 rounded-full bg-white/5 px-2.5 py-1 text-xs font-medium uppercase tracking-wide text-white/60">
-          <Coins className="h-3.5 w-3.5" /> {m.asset}
+      <div className="flex items-center justify-between">
+        <span className="flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-xs font-medium uppercase tracking-wide text-white/70">
+          <Coins className="h-3.5 w-3.5 text-brand-400" />
+          {m.asset}
         </span>
-        <span className="inline-flex items-center gap-1 text-xs text-white/50">
+        <span className="flex items-center gap-1 text-xs text-white/50">
           <Clock className="h-3.5 w-3.5" />
           {remaining == null ? "…" : fmtRemaining(remaining)}
         </span>
       </div>
 
       {aiScored && aiPct != null && (
-        <div className="mb-3 flex items-center gap-2 rounded-xl border border-brand/20 bg-brand/10 px-3 py-2">
-          <Sparkles className="h-4 w-4 text-brand-400" />
-          <span className="text-xs text-white/70">Ritual AI prediction</span>
-          <span className="ml-auto text-sm font-semibold text-brand-400">
+        <div className="mt-3 flex items-center justify-between rounded-xl border border-brand/30 bg-brand/10 px-3 py-2">
+          <span className="flex items-center gap-1.5 text-xs font-medium text-brand-400">
+            <Sparkles className="h-3.5 w-3.5" />
+            Ritual AI prediction
+          </span>
+          <span className="text-xs font-bold text-brand-400">
             {aiPct.toFixed(1)}% YES
           </span>
         </div>
       )}
 
-      <h3 className="mb-4 text-base font-semibold leading-snug text-white">{m.question}</h3>
+      <h3 className="mt-3 text-base font-semibold leading-snug text-white">
+        {m.question}
+      </h3>
 
-      <div className="mb-1 flex items-center justify-between text-xs">
+      {spark.length > 1 && (
+        <div className="mt-3">
+          <div className="mb-1 flex items-center justify-between text-[10px] uppercase tracking-wide text-white/30">
+            <span>7d price</span>
+            {info && (
+              <span className={sparkUp ? "text-up" : "text-down"}>
+                ${info.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </span>
+            )}
+          </div>
+          <Sparkline data={spark} up={sparkUp} />
+        </div>
+      )}
+
+      <div className="mt-4 flex items-center justify-between text-xs">
         <span className="font-medium text-up">YES {yesPct.toFixed(0)}%</span>
         <span className="font-medium text-down">NO {(100 - yesPct).toFixed(0)}%</span>
       </div>
-      <div className="mb-4 h-2 overflow-hidden rounded-full bg-white/10">
+      <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/10">
         <motion.div
           className="h-full bg-gradient-to-r from-up to-up/70"
           initial={ { width: 0 } }
@@ -226,8 +252,8 @@ export function MarketCard({ id, index }: { id: bigint; index: number }) {
         />
       </div>
 
-      <div className="mb-4 flex items-center justify-between text-xs text-white/50">
-        <span className="inline-flex items-center gap-1">
+      <div className="mt-3 flex items-center justify-between text-xs text-white/50">
+        <span className="flex items-center gap-1">
           <TrendingUp className="h-3.5 w-3.5" />
           Pool {Number(formatEther(pool)).toFixed(3)} RITUAL
         </span>
@@ -238,52 +264,54 @@ export function MarketCard({ id, index }: { id: bigint; index: number }) {
         <button
           onClick={runAi}
           disabled={!isConnected || busy}
-          className="mb-3 flex w-full items-center justify-center gap-1.5 rounded-xl border border-brand/30 py-2 text-xs font-medium text-brand-400 transition hover:bg-brand/10 disabled:opacity-50"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-brand/30 bg-brand/10 py-2 text-sm font-medium text-brand-400 transition hover:bg-brand/20 disabled:opacity-50"
         >
-          <Brain className="h-3.5 w-3.5" />
+          <Brain className="h-4 w-4" />
           {busy && scoring ? "Scoring on-chain…" : "Run Ritual AI prediction"}
         </button>
       )}
 
       {resolved ? (
-        <div className="rounded-xl bg-white/5 px-3 py-3 text-center text-sm">
-          <span className="text-white/60">Resolved — </span>
-          <span className={m.outcome === 1 ? "font-semibold text-up" : "font-semibold text-down"}>
+        <div className="mt-4 rounded-xl bg-white/5 py-2 text-center text-sm text-white/70">
+          Resolved —{" "}
+          <span className={m.outcome === 1 ? "font-bold text-up" : "font-bold text-down"}>
             {m.outcome === 1 ? "YES" : "NO"}
-          </span>
-          <span className="text-white/60"> @ ${m.resolvedPrice.toString()}</span>
+          </span>{" "}
+          @ ${m.resolvedPrice.toString()}
         </div>
       ) : closed ? (
-        <div className="space-y-2">
-          <p className="text-center text-xs text-white/50">Betting closed · ready to resolve</p>
+        <div className="mt-4">
+          <p className="mb-2 text-center text-xs text-white/50">
+            Betting closed · ready to resolve
+          </p>
           <button
             onClick={resolveMarket}
             disabled={!isConnected || busy}
-            className="w-full rounded-xl bg-gradient-to-r from-brand to-brand-600 py-2.5 text-sm font-medium text-white shadow-glow transition hover:opacity-90 disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand py-2 text-sm font-semibold text-white shadow-glow transition hover:bg-brand-600 disabled:opacity-50"
           >
             {busy && resolving ? "Resolving…" : "Resolve market"}
           </button>
-          <p className="text-center text-[11px] text-white/40">
+          <p className="mt-2 text-center text-[11px] text-white/40">
             Settles this market against the live market price.
           </p>
           {!isConnected && (
-            <p className="text-center text-xs text-white/40">Connect wallet to resolve</p>
-          )}
-          {betError && <p className="text-center text-xs text-down">{betError}</p>}
-          {isSuccess && (
-            <p className="rounded-lg bg-up/15 px-3 py-2 text-center text-xs text-up">
-              Submitted! Refreshing…
+            <p className="mt-1 text-center text-[11px] text-white/40">
+              Connect wallet to resolve
             </p>
+          )}
+          {betError && <p className="mt-2 text-center text-xs text-down">{betError}</p>}
+          {isSuccess && (
+            <p className="mt-2 text-center text-xs text-up">Submitted! Refreshing…</p>
           )}
         </div>
       ) : (
-        <div className="space-y-3">
-          <div className="grid grid-cols-4 gap-2">
+        <div className="mt-4">
+          <div className="flex gap-2">
             <input
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               inputMode="decimal"
-              className="col-span-1 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm outline-none focus:border-brand"
+              className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm outline-none focus:border-brand"
               placeholder="0.01"
             />
             {PRESETS.map((p) => (
@@ -296,7 +324,7 @@ export function MarketCard({ id, index }: { id: bigint; index: number }) {
               </button>
             ))}
           </div>
-          <div className="flex gap-2">
+          <div className="mt-3 flex gap-2">
             <button
               onClick={() => placeBet(true)}
               disabled={!isConnected || busy}
@@ -313,13 +341,11 @@ export function MarketCard({ id, index }: { id: bigint; index: number }) {
             </button>
           </div>
           {!isConnected && (
-            <p className="text-center text-xs text-white/40">Connect wallet to bet</p>
+            <p className="mt-2 text-center text-[11px] text-white/40">Connect wallet to bet</p>
           )}
-          {betError && <p className="text-center text-xs text-down">{betError}</p>}
+          {betError && <p className="mt-2 text-center text-xs text-down">{betError}</p>}
           {isSuccess && (
-            <p className="rounded-lg bg-up/15 px-3 py-2 text-center text-xs text-up">
-              Bet placed! Refreshing…
-            </p>
+            <p className="mt-2 text-center text-xs text-up">Bet placed! Refreshing…</p>
           )}
         </div>
       )}

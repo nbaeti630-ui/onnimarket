@@ -3,6 +3,8 @@ import { CreateMarket } from "@/components/CreateMarket";
 import { MarketGrid } from "@/components/MarketGrid";
 import { PriceTicker } from "@/components/PriceTicker";
 import { LiveStats } from "@/components/LiveStats";
+import { FeaturedMarket } from "@/components/FeaturedMarket";
+import { ActivityFeed } from "@/components/ActivityFeed";
 
 const STATS = [
   { label: "Chain", value: "Ritual 1979" },
@@ -60,12 +62,23 @@ export default function Home() {
         <LiveStats />
       </section>
 
+      <section className="mt-10">
+        <FeaturedMarket />
+      </section>
+
       <section id="markets" className="mt-12 pb-20">
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-xl font-bold text-white">Live markets</h2>
           <CreateMarket />
         </div>
-        <MarketGrid />
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <MarketGrid />
+          </div>
+          <div className="lg:col-span-1">
+            <ActivityFeed />
+          </div>
+        </div>
       </section>
     </div>
   );

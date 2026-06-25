@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ConnectButton } from "./ConnectButton";
-import { Sparkles } from "lucide-react";
 
 const NAV = [
   { href: "/", label: "Markets" },
@@ -18,9 +17,7 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-white/10 bg-black/30 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
         <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-brand-600 shadow-glow">
-            <Sparkles className="h-4 w-4 text-white" />
-          </span>
+          <img src="/logo.png" alt="OnniMarket" className="h-8 w-8 rounded-xl" />
           <span className="text-base font-semibold">
             Onni<span className="text-brand-400">Market</span>
           </span>

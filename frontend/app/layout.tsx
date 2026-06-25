@@ -3,6 +3,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { SoundToggle } from "@/components/SoundToggle";
 
 export const metadata: Metadata = {
   title: "OnniMarket — Self-Resolving Crypto Prediction Markets",
@@ -25,7 +26,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="mx-auto max-w-6xl px-4 pb-24">{children}</main>
         </Providers>
         <Footer />
-  </body>
+    <SoundToggle />
+      </body>
     </html>
   );
 }

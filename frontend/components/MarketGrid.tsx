@@ -130,8 +130,8 @@ export function MarketGrid() {
         </p>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((id) => (
-            <MarketCard key={id.toString()} id={id} />
+          {filtered.map((id, i) => (
+            <MarketCard key={id.toString()} id={id} index={i} />
           ))}
         </div>
       )}

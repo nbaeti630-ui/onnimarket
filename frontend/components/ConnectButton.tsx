@@ -4,6 +4,21 @@ import { useState, useEffect } from "react";
 import { useAccount, useConnect, useDisconnect, type Connector } from "wagmi";
 import { Wallet, LogOut } from "lucide-react";
 
+function labelFor(c: Connector) {
+	if (c.name === "Injected") return "MetaMask";
+	return c.name;
+}
+
+function WalletIcon({ c }: { c: Connector }) {
+	const label = labelFor(c);
+	if (c.icon) {
+		return <img src={c.icon} alt={label} className="h-5 w-5 rounded" />;
+	}
+	if (label === "MetaMask") return <span className="text-base">🦊</span>;
+	if (label === "WalletConnect") return <span className="text-base">🔗</span>;
+	return <Wallet className="h-4 w-4 text-brand-400" />;
+}
+
 function ConnectButton() {
 	const [mounted, setMounted] = useState(false);
 	const [open, setOpen] = useState(false);
@@ -60,10 +75,10 @@ function ConnectButton() {
 						<button
 							key={c.uid}
 							onClick={() => pick(c)}
-							className="flex w-full items-center gap-2 px-4 py-3 text-left text-sm text-white/90 hover:bg-white/5"
+							className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-white/90 hover:bg-white/5"
 						>
-							<Wallet className="h-4 w-4 text-brand-400" />
-							{c.name}
+							<WalletIcon c={c} />
+							{labelFor(c)}
 						</button>
 					))}
 				</div>

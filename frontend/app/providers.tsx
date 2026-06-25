@@ -2,13 +2,13 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider, createConfig, http } from "wagmi";
-import { injected } from "wagmi/connectors";
+import { injected, walletConnect } from "wagmi/connectors";
 import { ritualChain } from "@/lib/chain";
 import { useState } from "react";
 
 export const wagmiConfig = createConfig({
   chains: [ritualChain],
-  connectors: [injected()],
+  connectors: [injected(), walletConnect({ projectId: "22748db9d9949085e034adb7e4894393", showQrModal: true })],
   transports: {
     [ritualChain.id]: http(),
   },

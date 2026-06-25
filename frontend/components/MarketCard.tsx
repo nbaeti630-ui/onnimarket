@@ -14,6 +14,7 @@ import { marketAbi, MARKET_ADDRESS, type MarketView } from "@/lib/contract";
 import { buildFeatures, featuresToInt32 } from "@/lib/ai";
 import { usePrices } from "@/lib/prices";
 import { Sparkline } from "./Sparkline";
+import { YourPosition } from "./YourPosition";
 import { TrendingUp, Clock, Coins, Sparkles, Brain } from "lucide-react";
 
 const PRESETS = ["0.01", "0.1", "1"];
@@ -349,6 +350,7 @@ export function MarketCard({ id, index = 0 }: { id: bigint; index?: number }) {
           )}
         </div>
       )}
-    </motion.article>
+    			<YourPosition id={id} />
+		</motion.article>
   );
 }

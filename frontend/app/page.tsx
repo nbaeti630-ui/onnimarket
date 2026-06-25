@@ -68,7 +68,7 @@ export default function Home() {
 
       <section id="markets" className="mt-12 pb-20">
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-white">Live markets</h2>
+          <h2 className="text-xl font-bold text-white">Live markets <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-up/15 px-2 py-0.5 align-middle text-xs font-medium text-up"><span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-up" />Live</span></h2>
           <CreateMarket />
         </div>
         <div className="grid gap-6 lg:grid-cols-3">

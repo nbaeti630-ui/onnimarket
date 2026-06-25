@@ -50,7 +50,7 @@ export function Portfolio() {
         ))}
       </div>
       <p className="mt-6 text-center text-xs text-white/30">
-        Only markets you have bet on appear here.
+        Markets you've bet on show up here. Place a bet to get started.
       </p>
     </>
   );

@@ -15,7 +15,7 @@ export const wagmiConfig = createConfig({
 });
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(() => new QueryClient({ defaultOptions: { queries: { refetchInterval: 10000, refetchOnWindowFocus: true } } }));
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
